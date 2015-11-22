@@ -69,9 +69,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
                 if (now >= mRecordEnd) {
                     stopRecordingVideo(true);
                 } else {
-                    long diff = mRecordEnd - now;
-                    if (diff <= (1000 * 11))
-                        mRecordDuration.setTextColor(ContextCompat.getColor(getActivity(), R.color.mcam_material_red_500));
+                    final long diff = mRecordEnd - now;
                     mRecordDuration.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
                 }
             } else {

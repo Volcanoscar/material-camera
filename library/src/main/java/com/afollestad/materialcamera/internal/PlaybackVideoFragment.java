@@ -91,8 +91,6 @@ public class PlaybackVideoFragment extends Fragment implements
                     useVideo();
                     return;
                 }
-                if (diff <= (1000 * 11))
-                    mPlaybackContinueCountdownLabel.setTextColor(ContextCompat.getColor(getActivity(), R.color.mcam_material_red_500));
                 mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
             }
 
@@ -182,9 +180,7 @@ public class PlaybackVideoFragment extends Fragment implements
 
         if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit()) {
             mPlaybackContinueCountdownLabel.setVisibility(View.VISIBLE);
-            long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
-            if (diff <= (1000 * 11))
-                mPlaybackContinueCountdownLabel.setTextColor(ContextCompat.getColor(getActivity(), R.color.mcam_material_red_500));
+            final long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
             mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
             startCounter();
         } else {
