@@ -9,12 +9,9 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.R;
@@ -298,18 +295,6 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
                 throwError(new Exception("Failed to start recording: " + t.getMessage(), t));
             }
         }
-    }
-
-    @Nullable
-    @Override
-    public TextView getDurationLabel() {
-        return mRecordDuration;
-    }
-
-    @Nullable
-    @Override
-    public ImageView getFacingImageView() {
-        return mButtonFacing;
     }
 
     @Override

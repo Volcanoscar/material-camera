@@ -72,18 +72,6 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
     private Handler mBackgroundHandler;
     private final Semaphore mCameraOpenCloseLock = new Semaphore(1);
 
-    @Nullable
-    @Override
-    public TextView getDurationLabel() {
-        return mRecordDuration;
-    }
-
-    @Nullable
-    @Override
-    public ImageView getFacingImageView() {
-        return mButtonFacing;
-    }
-
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {

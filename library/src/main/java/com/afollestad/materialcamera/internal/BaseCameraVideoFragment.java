@@ -10,14 +10,12 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialcamera.MaterialCamera;
@@ -62,7 +60,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
     private final Runnable mPositionUpdater = new Runnable() {
         @Override
         public void run() {
-            if (mInterface == null || getDurationLabel() == null) return;
+            if (mInterface == null || mRecordDuration == null) return;
             final long mRecordStart = mInterface.getRecordingStart();
             final long mRecordEnd = mInterface.getRecordingEnd();
             if (mRecordStart == -1 && mRecordEnd == -1) return;
@@ -74,11 +72,11 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
                 } else {
                     long diff = mRecordEnd - now;
                     if (diff <= (1000 * 11))
-                        getDurationLabel().setTextColor(ContextCompat.getColor(getActivity(), R.color.mcam_material_red_500));
-                    getDurationLabel().setText(String.format("-%s", CameraUtil.getDurationString(diff)));
+                        mRecordDuration.setTextColor(ContextCompat.getColor(getActivity(), R.color.mcam_material_red_500));
+                    mRecordDuration.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
                 }
             } else {
-                getDurationLabel().setText(CameraUtil.getDurationString(now - mRecordStart));
+                mRecordDuration.setText(CameraUtil.getDurationString(now - mRecordStart));
             }
             if (mPositionHandler != null)
                 mPositionHandler.postDelayed(this, 1000);
@@ -237,12 +235,6 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
-    @Nullable
-    public abstract TextView getDurationLabel();
-
-    @Nullable
-    public abstract ImageView getFacingImageView();
-
     @Override
     public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -266,8 +258,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
     public void onClick(View view) {
         if (view.getId() == R.id.facing) {
             mInterface.toggleCameraPosition();
-            assert getFacingImageView() != null;
-            getFacingImageView().setImageResource(mInterface.getCurrentCameraPosition() == BaseVideoRecorderActivity.CAMERA_POSITION_BACK ?
+            mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == BaseVideoRecorderActivity.CAMERA_POSITION_BACK ?
                     R.drawable.ic_camera_front : R.drawable.ic_camera_rear);
             closeCamera();
             openCamera();
