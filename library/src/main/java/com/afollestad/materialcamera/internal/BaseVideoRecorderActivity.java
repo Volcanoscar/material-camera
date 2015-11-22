@@ -255,6 +255,8 @@ abstract class BaseVideoRecorderActivity extends AppCompatActivity implements Vi
     public final void onRetry(@Nullable String outputUri) {
         if (outputUri != null)
             deleteOutputFile(outputUri);
+        if (!shouldAutoSubmit())
+            setRecordingStart(-1);
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, createFragment())
                 .commit();
