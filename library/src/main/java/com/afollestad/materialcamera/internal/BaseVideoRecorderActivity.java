@@ -18,7 +18,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.afollestad.materialcamera.MaterialCamera;
 import com.afollestad.materialcamera.R;
+import com.afollestad.materialcamera.TimeLimitReachedException;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
@@ -37,6 +39,7 @@ abstract class BaseVideoRecorderActivity extends AppCompatActivity implements Vi
     private long mLengthLimit = -1;
     private Object mFrontCameraId;
     private Object mBackCameraId;
+    private boolean mDidRecord = false;
 
     public static final int PERMISSION_RC = 69;
 
@@ -259,7 +262,13 @@ abstract class BaseVideoRecorderActivity extends AppCompatActivity implements Vi
 
     @Override
     public final void onShowPreview(@Nullable String outputUri, boolean countdownIsAtZero) {
-        if ((shouldAutoSubmit() && countdownIsAtZero) || outputUri == null || !allowRetry()) {
+        if ((shouldAutoSubmit() && (countdownIsAtZero || !allowRetry())) || outputUri == null) {
+            if (outputUri == null) {
+                setResult(RESULT_CANCELED, new Intent().putExtra(MaterialCamera.ERROR_EXTRA,
+                        new TimeLimitReachedException()));
+                finish();
+                return;
+            }
             useVideo(outputUri);
         } else {
             if (!hasLengthLimit()) {
@@ -300,7 +309,7 @@ abstract class BaseVideoRecorderActivity extends AppCompatActivity implements Vi
     public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mRequestingPermission = false;
-        if (grantResults[0] == -1) {
+        if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
             new MaterialDialog.Builder(this)
                     .title(R.string.mcam_permissions_needed)
                     .content(R.string.mcam_video_perm_warning)
@@ -323,5 +332,15 @@ abstract class BaseVideoRecorderActivity extends AppCompatActivity implements Vi
                     .setDataAndType(Uri.parse(uri), "video/mp4"));
         }
         finish();
+    }
+
+    @Override
+    public void setDidRecord(boolean didRecord) {
+        mDidRecord = didRecord;
+    }
+
+    @Override
+    public boolean didRecord() {
+        return mDidRecord;
     }
 }

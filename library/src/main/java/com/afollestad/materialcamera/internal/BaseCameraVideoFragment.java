@@ -67,7 +67,6 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
             final long now = System.currentTimeMillis();
             if (mRecordEnd != -1) {
                 if (now >= mRecordEnd) {
-                    mInterface.setRecordingStart(-1);
                     stopRecordingVideo(true);
                 } else {
                     long diff = mRecordEnd - now;
@@ -120,10 +119,12 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
         mButtonFacing.setImageDrawable(mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
                 mCameraFrontIcon : mCameraBackIcon);
-        if (mMediaRecorder != null && mIsRecording)
+        if (mMediaRecorder != null && mIsRecording) {
             mButtonVideo.setImageDrawable(mStopIcon);
-        else
+        } else {
             mButtonVideo.setImageDrawable(mRecordIcon);
+            mInterface.setDidRecord(false);
+        }
 
         mButtonVideo.setOnClickListener(this);
         mButtonFacing.setOnClickListener(this);
@@ -229,6 +230,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
         final int orientation = Degrees.getActivityOrientation(getActivity());
         //noinspection ResourceType
         getActivity().setRequestedOrientation(orientation);
+        mInterface.setDidRecord(true);
     }
 
     public void stopRecordingVideo(boolean reachedZero) {

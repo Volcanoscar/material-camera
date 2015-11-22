@@ -145,14 +145,28 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
                 }
             }
             if (getCurrentCameraPosition() == CAMERA_POSITION_UNKNOWN) {
-                if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1) {
-                    mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
-                    mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
+                if (getArguments().getBoolean("default_to_front_facing", false)) {
+                    // Check front facing first
+                    if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1) {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
+                    } else {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
+                        if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1)
+                            mInterface.setCameraPosition(CAMERA_POSITION_BACK);
+                        else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
+                    }
                 } else {
-                    mButtonFacing.setImageResource(R.drawable.ic_camera_front);
-                    if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1)
+                    // Check back facing first
+                    if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1) {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
                         mInterface.setCameraPosition(CAMERA_POSITION_BACK);
-                    else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
+                    } else {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1)
+                            mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
+                        else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
+                    }
                 }
             }
 
@@ -221,7 +235,7 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
                 mCamera = null;
             }
         } catch (IllegalStateException e) {
-            throw new RuntimeException("Illegal state while trying to close camera.");
+            throwError(new Exception("Illegal state while trying to close camera.", e));
         }
     }
 
@@ -302,7 +316,8 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
         super.stopRecordingVideo(reachedZero);
         mIsRecording = false;
 
-        if (mInterface.hasLengthLimit() && (mInterface.getRecordingStart() < 0 || mMediaRecorder == null)) {
+        if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
+                (mInterface.getRecordingStart() < 0 || mMediaRecorder == null)) {
             stopCounter();
             if (mCamera != null)
                 mCamera.lock();
@@ -311,9 +326,9 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
             mButtonFacing.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    ((VideoActivityInterface) getActivity()).onShowPreview(mOutputUri, reachedZero);
+                    mInterface.onShowPreview(mOutputUri, reachedZero);
                 }
-            }, 200);
+            }, 100);
             return;
         }
 
@@ -322,20 +337,15 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
         releaseRecorder();
         closeCamera();
 
+        if (!mInterface.didRecord())
+            mOutputUri = null;
+
         mButtonVideo.setImageResource(R.drawable.ic_action_record);
         mButtonFacing.setVisibility(View.VISIBLE);
-        if (mInterface.getRecordingStart() > -1 && getActivity() != null) {
-            mButtonFacing.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ((VideoActivityInterface) getActivity()).onShowPreview(mOutputUri, reachedZero);
-                }
-            }, 200);
-        }
+        if (mInterface.getRecordingStart() > -1 && getActivity() != null)
+            mInterface.onShowPreview(mOutputUri, reachedZero);
 
         stopCounter();
-        if (!mInterface.shouldAutoSubmit())
-            mInterface.setRecordingEnd(-1);
     }
 
     static class CompareSizesByArea implements Comparator<Camera.Size> {

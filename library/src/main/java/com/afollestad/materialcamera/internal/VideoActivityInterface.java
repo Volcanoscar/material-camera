@@ -45,4 +45,8 @@ interface VideoActivityInterface {
     boolean shouldAutoSubmit();
 
     boolean allowRetry();
+
+    void setDidRecord(boolean didRecord);
+
+    boolean didRecord();
 }

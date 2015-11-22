@@ -26,14 +26,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.R;
@@ -229,9 +226,8 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
         if (null == activity || activity.isFinishing()) return;
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
-            if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
-                throw new RuntimeException("Time out waiting to lock camera opening.");
-            }
+            if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS))
+                throwError(new Exception("Time out waiting to lock camera opening."));
             if (mInterface.getFrontCamera() == null || mInterface.getBackCamera() == null) {
                 for (String cameraId : manager.getCameraIdList()) {
                     if (cameraId == null) continue;
@@ -247,16 +243,28 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
                 }
             }
             if (mInterface.getCurrentCameraPosition() == CAMERA_POSITION_UNKNOWN) {
-                if (mInterface.getFrontCamera() != null) {
-                    mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
-                    mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
-                    mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                if (getArguments().getBoolean("default_to_front_facing", false)) {
+                    // Check front facing first
+                    if (mInterface.getFrontCamera() != null) {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
+                    } else {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
+                        if (mInterface.getBackCamera() != null)
+                            mInterface.setCameraPosition(CAMERA_POSITION_BACK);
+                        else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
+                    }
                 } else {
-                    mButtonFacing.setImageResource(R.drawable.ic_camera_front);
-                    if (mInterface.getBackCamera() != null)
+                    // Check back facing first
+                    if (mInterface.getBackCamera() != null) {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
                         mInterface.setCameraPosition(CAMERA_POSITION_BACK);
-                    else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
-                    mButtonFacing.setImageResource(R.drawable.ic_camera_front);
+                    } else {
+                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        if (mInterface.getFrontCamera() != null)
+                            mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
+                        else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
+                    }
                 }
             }
 
@@ -471,23 +479,25 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
     public void stopRecordingVideo(boolean reachedZero) {
         super.stopRecordingVideo(reachedZero);
         mIsRecording = false;
-        if (mInterface.hasLengthLimit() && (mInterface.getRecordingStart() < 0 || mMediaRecorder == null)) {
+
+        if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
+                (mInterface.getRecordingStart() < 0 || mMediaRecorder == null)) {
             stopCounter();
             releaseRecorder();
-            ((VideoActivityInterface) getActivity()).onShowPreview(mOutputUri, reachedZero);
+            mInterface.onShowPreview(mOutputUri, reachedZero);
             return;
         }
+
+        if (!mInterface.didRecord())
+            mOutputUri = null;
 
         releaseRecorder();
         mButtonVideo.setImageResource(R.drawable.ic_action_record);
         mButtonFacing.setVisibility(View.VISIBLE);
-        if (mInterface.getRecordingStart() > -1) {
-            ((VideoActivityInterface) getActivity()).onShowPreview(mOutputUri, reachedZero);
-        }
+        if (mInterface.getRecordingStart() > -1 && getActivity() != null)
+            mInterface.onShowPreview(mOutputUri, reachedZero);
 
         stopCounter();
-        if (!mInterface.shouldAutoSubmit())
-            mInterface.setRecordingEnd(-1);
     }
 
     static class CompareSizesByArea implements Comparator<Size> {

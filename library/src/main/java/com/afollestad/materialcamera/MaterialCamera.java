@@ -30,6 +30,7 @@ public class MaterialCamera {
     private String mSaveDir;
     private int mPrimaryColor;
     private boolean mShowPortraitWarning = true;
+    private boolean mDefaultToFrontFacing = false;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -42,13 +43,11 @@ public class MaterialCamera {
     }
 
     public MaterialCamera lengthLimitSeconds(int lengthLimitSec) {
-        mLengthLimit = lengthLimitSec * 1000;
-        return this;
+        return lengthLimitMillis(lengthLimitSec * 1000);
     }
 
     public MaterialCamera lengthLimitMinutes(int lengthLimitMin) {
-        mLengthLimit = lengthLimitMin * 1000 * 60;
-        return this;
+        return lengthLimitMillis(lengthLimitMin * 1000 * 60);
     }
 
     public MaterialCamera allowRetry(boolean allowRetry) {
@@ -89,6 +88,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera defaultToFrontFacing(boolean frontFacing) {
+        mDefaultToFrontFacing = frontFacing;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls = CameraUtil.hasCamera2(mContext) ?
                 VideoRecorderActivity2.class : VideoRecorderActivity.class;
@@ -98,7 +102,8 @@ public class MaterialCamera {
                 .putExtra("auto_submit", mAutoSubmit)
                 .putExtra("save_dir", mSaveDir)
                 .putExtra("primary_color", mPrimaryColor)
-                .putExtra("show_portrait_warning", mShowPortraitWarning);
+                .putExtra("show_portrait_warning", mShowPortraitWarning)
+                .putExtra("default_to_front_facing", mDefaultToFrontFacing);
     }
 
     public void start(int requestCode) {
