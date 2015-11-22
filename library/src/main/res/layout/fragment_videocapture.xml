@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootFrame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:foreground="?selectableItemBackground">
+
+    <include
+        layout="@layout/include_camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/controlsFrame" />
+
+    <FrameLayout
+        android:id="@+id/controlsFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?colorPrimaryDark"
+        android:elevation="@dimen/mcam_toolbar_elevation"
+        android:paddingBottom="@dimen/mcam_content_inset_less"
+        android:paddingLeft="@dimen/mcam_content_inset"
+        android:paddingRight="@dimen/mcam_content_inset"
+        android:paddingTop="@dimen/mcam_content_inset_less"
+        tools:ignore="UnusedAttribute">
+
+        <ImageButton
+            android:id="@+id/facing"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|start"
+            android:background="@drawable/circle_selector"
+            android:padding="@dimen/mcam_content_inset_less"
+            android:scaleType="fitXY"
+            tools:background="#80000000"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/video"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:background="@drawable/circle_selector"
+            android:padding="@dimen/mcam_content_inset_less"
+            android:scaleType="fitXY"
+            tools:background="#80000000"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/recordDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/mcam_defaultDuration"
+            android:textColor="#fff"
+            android:textSize="@dimen/mcam_regular_content_fontsize" />
+
+    </FrameLayout>
+
+</RelativeLayout>

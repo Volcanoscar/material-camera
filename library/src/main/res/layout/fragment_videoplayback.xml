@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playbackFrame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:foreground="?selectableItemBackground"
+    tools:ignore="UnusedAttribute">
+
+    <com.afollestad.materialcamera.internal.VideoStreamView
+        android:id="@+id/playbackView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:id="@+id/controlsFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#80000000"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/mcam_content_inset_less"
+        android:paddingLeft="@dimen/mcam_content_inset"
+        android:paddingRight="@dimen/mcam_content_inset"
+        android:paddingTop="@dimen/mcam_content_inset_less">
+
+        <TextView
+            android:id="@+id/playbackContinueCountdownLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="@dimen/mcam_content_inset"
+            android:fontFamily="sans-serif"
+            android:singleLine="true"
+            android:text="-00:00"
+            android:textColor="#fff"
+            android:textSize="@dimen/mcam_regular_title_fontsize"
+            tools:ignore="HardcodedText,UnusedAttribute" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="2dp"
+                android:layout_marginRight="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/mcam_defaultDuration"
+                android:textColor="#fff"
+                android:textSize="@dimen/mcam_regular_content_fontsize" />
+
+            <SeekBar
+                android:id="@+id/positionSeek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/position"
+                android:layout_toLeftOf="@+id/duration"
+                android:layout_toRightOf="@+id/position"
+                android:layout_toStartOf="@+id/duration" />
+
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="2dp"
+                android:layout_marginStart="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/mcam_defaultDuration"
+                android:textColor="#fff"
+                android:textSize="@dimen/mcam_regular_content_fontsize" />
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom">
+
+            <Button
+                android:id="@+id/retry"
+                style="?borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|start"
+                android:background="@drawable/square_selector"
+                android:enabled="false"
+                android:fontFamily="sans-serif-medium"
+                android:padding="@dimen/mcam_content_inset_less"
+                android:scaleType="fitXY"
+                android:text="@string/mcam_retry"
+                android:textColor="#fff"
+                android:textSize="@dimen/mcam_regular_title_fontsize" />
+
+            <ImageButton
+                android:id="@+id/playPause"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:background="@drawable/circle_selector"
+                android:enabled="false"
+                android:padding="@dimen/mcam_content_inset_less"
+                android:scaleType="fitXY"
+                tools:background="#80000000"
+                tools:ignore="ContentDescription" />
+
+            <Button
+                android:id="@+id/useVideo"
+                style="?borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:background="@drawable/square_selector"
+                android:enabled="false"
+                android:padding="@dimen/mcam_content_inset_less"
+                android:scaleType="fitXY"
+                android:text="@string/mcam_use_video"
+                android:textColor="#fff"
+                android:textSize="@dimen/mcam_regular_title_fontsize" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
