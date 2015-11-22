@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .showPortraitWarning(false)
                 .autoSubmit(false)
                 .allowRetry(true)
-                .lengthLimitSeconds(15)
+                .lengthLimitMinutes(2.5f)
                 .defaultToFrontFacing(false)
                 .start(CAMERA_RQ);
     }

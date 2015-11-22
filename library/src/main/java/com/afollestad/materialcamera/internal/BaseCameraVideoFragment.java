@@ -81,20 +81,6 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        final Resources r = getResources();
-        if (mRecordIcon == null)
-            mRecordIcon = MrVector.inflate(r, R.drawable.ic_action_record);
-        if (mStopIcon == null)
-            mStopIcon = MrVector.inflate(r, R.drawable.ic_action_stop);
-        if (mCameraFrontIcon == null)
-            mCameraFrontIcon = MrVector.inflate(r, R.drawable.ic_camera_front);
-        if (mCameraBackIcon == null)
-            mCameraBackIcon = MrVector.inflate(r, R.drawable.ic_camera_rear);
-    }
-
-    @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_videocapture, container, false);
     }
@@ -111,6 +97,16 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        final Resources r = getResources();
+        if (mRecordIcon == null)
+            mRecordIcon = MrVector.inflate(r, R.drawable.ic_action_record);
+        if (mStopIcon == null)
+            mStopIcon = MrVector.inflate(r, R.drawable.ic_action_stop);
+        if (mCameraFrontIcon == null)
+            mCameraFrontIcon = MrVector.inflate(r, R.drawable.ic_camera_front);
+        if (mCameraBackIcon == null)
+            mCameraBackIcon = MrVector.inflate(r, R.drawable.ic_camera_rear);
 
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);

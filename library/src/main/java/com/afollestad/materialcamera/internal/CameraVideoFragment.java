@@ -2,6 +2,7 @@ package com.afollestad.materialcamera.internal;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -193,6 +194,13 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mCamera != null)
+            setCameraDisplayOrientation(mCamera.getParameters());
+    }
+
     private void setCameraDisplayOrientation(Camera.Parameters parameters) {
         Camera.CameraInfo info =
                 new Camera.CameraInfo();
@@ -204,7 +212,7 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
                 info.orientation, deviceOrientation, mDisplayOrientation));
 
         int previewOrientation = mDisplayOrientation;
-        if (Degrees.isPortrait(deviceOrientation))
+        if (Degrees.isPortrait(deviceOrientation) && getCurrentCameraPosition() == CAMERA_POSITION_FRONT)
             previewOrientation = Degrees.mirror(mDisplayOrientation);
         parameters.setRotation(previewOrientation);
         mCamera.setDisplayOrientation(previewOrientation);

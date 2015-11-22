@@ -42,12 +42,12 @@ public class MaterialCamera {
         return this;
     }
 
-    public MaterialCamera lengthLimitSeconds(int lengthLimitSec) {
-        return lengthLimitMillis(lengthLimitSec * 1000);
+    public MaterialCamera lengthLimitSeconds(float lengthLimitSec) {
+        return lengthLimitMillis((int) (lengthLimitSec * 1000f));
     }
 
-    public MaterialCamera lengthLimitMinutes(int lengthLimitMin) {
-        return lengthLimitMillis(lengthLimitMin * 1000 * 60);
+    public MaterialCamera lengthLimitMinutes(float lengthLimitMin) {
+        return lengthLimitMillis((int) (lengthLimitMin * 1000f * 60f));
     }
 
     public MaterialCamera allowRetry(boolean allowRetry) {
